@@ -1,5 +1,6 @@
 from typing import List
 
+source_paths = None
 source_path = None
 target_paths = None
 target_path = None

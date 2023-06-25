@@ -145,7 +145,9 @@ def select_source_path() -> None:
     global RECENT_DIRECTORY_SOURCE
 
     PREVIEW.withdraw()
-    source_path = ctk.filedialog.askopenfilename(title='select an source image', initialdir=RECENT_DIRECTORY_SOURCE)
+    source_paths = ctk.filedialog.askopenfilenames(title='select source images', initialdir=RECENT_DIRECTORY_SOURCE)
+    roop.globals.source_paths = source_paths
+    source_path = source_paths[0]
     if is_image(source_path):
         roop.globals.source_path = source_path
         RECENT_DIRECTORY_SOURCE = os.path.dirname(roop.globals.source_path)

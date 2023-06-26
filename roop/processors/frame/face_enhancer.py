@@ -1,4 +1,5 @@
 from typing import Any, List, Callable
+import os
 import cv2
 import threading
 import gfpgan
@@ -62,8 +63,9 @@ def process_frame(source_face: Face, temp_frame: Frame) -> Frame:
     return temp_frame
 
 
-def process_frames(source_path: str, temp_frame_paths: List[str], update: Callable[[], None]) -> None:
+def process_frames(source_path: str, temp_directory_path: str, temp_frame_paths: List[str], update: Callable[[], None]) -> None:
     for temp_frame_path in temp_frame_paths:
+        temp_frame_path = os.path.join(temp_directory_path, os.path.basename(temp_frame_path))
         temp_frame = cv2.imread(temp_frame_path)
         result = process_frame(None, temp_frame)
         cv2.imwrite(temp_frame_path, result)
@@ -72,10 +74,11 @@ def process_frames(source_path: str, temp_frame_paths: List[str], update: Callab
 
 
 def process_image(source_path: str, target_path: str, output_path: str) -> None:
-    target_frame = cv2.imread(target_path)
+    target_frame = cv2.imread(output_path)
     result = process_frame(None, target_frame)
     cv2.imwrite(output_path, result)
 
 
 def process_video(source_path: str, temp_frame_paths: List[str]) -> None:
-    roop.processors.frame.core.process_video(None, temp_frame_paths, process_frames)
+    temp_directory_path = os.path.join(os.path.dirname(temp_frame_paths[0]), os.path.splitext(os.path.basename(roop.globals.source_path))[0])
+    roop.processors.frame.core.process_video(None, temp_directory_path, temp_frame_paths, process_frames)

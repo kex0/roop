@@ -225,7 +225,7 @@ def start() -> None:
                 for frame_processor in get_frame_processors_modules(roop.globals.frame_processors):
                     update_status('Progressing...', frame_processor.NAME)
                     frame_processor.process_image(roop.globals.source_path, roop.globals.target_path, roop.globals.output_path)
-                    # frame_processor.post_process()
+                    frame_processor.post_process()
                     release_resources()
                 if is_image(roop.globals.target_path):
                     update_status('Processing to image succeed!')
@@ -239,7 +239,7 @@ def start() -> None:
             for frame_processor in get_frame_processors_modules(roop.globals.frame_processors):
                 update_status('Progressing...', frame_processor.NAME)
                 frame_processor.process_video(roop.globals.source_path, temp_frame_paths)
-                # frame_processor.post_process()
+                frame_processor.post_process()
                 release_resources()
             # handles fps
             if roop.globals.keep_fps:

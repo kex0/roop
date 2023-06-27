@@ -50,6 +50,7 @@ def extract_frames(target_path: str) -> None:
 def create_video(target_path: str, fps: float = 30.0) -> None:
     temp_output_path = get_temp_output_path(target_path)
     temp_directory_path = get_temp_directory_path(target_path)
+    temp_directory_path = os.path.join(temp_directory_path, os.path.splitext(os.path.basename(roop.globals.source_path))[0])
     run_ffmpeg(['-r', str(fps), '-i', os.path.join(temp_directory_path, '%04d.png'), '-c:v', roop.globals.video_encoder, '-crf', str(roop.globals.video_quality), '-pix_fmt', 'yuv420p', '-vf', 'colorspace=bt709:iall=bt601-6-625:fast=1', '-y', temp_output_path])
 
 
@@ -69,6 +70,12 @@ def get_temp_directory_path(target_path: str) -> str:
     target_name, _ = os.path.splitext(os.path.basename(target_path))
     target_directory_path = os.path.dirname(target_path)
     return os.path.join(target_directory_path, TEMP_DIRECTORY, target_name)
+
+def get_temp_directory_subpath(target_path: str, source_path: str) -> str:
+    source_name, _ = os.path.splitext(os.path.basename(source_path))
+    target_name, _ = os.path.splitext(os.path.basename(target_path))
+    target_directory_path = os.path.dirname(target_path)
+    return os.path.join(target_directory_path, TEMP_DIRECTORY, target_name, source_name)
 
 
 def get_temp_output_path(target_path: str) -> str:
@@ -106,13 +113,22 @@ def clean_temp(target_path: str) -> None:
     if os.path.exists(parent_directory_path) and not os.listdir(parent_directory_path):
         os.rmdir(parent_directory_path)
 
+def clean_temp_subpath(target_path: str, source_path: str) -> None:
+    temp_directory_path = get_temp_directory_subpath(target_path, source_path)
+    if not roop.globals.keep_frames and os.path.isdir(temp_directory_path):
+        shutil.rmtree(temp_directory_path)
+    if os.path.exists(temp_directory_path) and not os.listdir(temp_directory_path):
+        os.rmdir(temp_directory_path)
+
 
 def has_image_extension(image_path: str) -> bool:
-    return image_path.lower().endswith(('png', 'jpg', 'jpeg'))
+    return image_path.lower().endswith(('png', 'jpg', 'jpeg', 'webp'))
 
 
 def is_image(image_path: str) -> bool:
     if image_path and os.path.isfile(image_path):
+        if image_path.lower().endswith(('png', 'jpg', 'jpeg', 'webp')):
+            return True
         mimetype, _ = mimetypes.guess_type(image_path)
         return bool(mimetype and mimetype.startswith('image/'))
     return False

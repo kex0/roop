@@ -28,7 +28,8 @@ def get_one_face(frame: Frame) -> Any:
 
 
 def get_many_faces(frame: Frame) -> Any:
+    faces = get_face_analyser().get(frame)
     try:
-        return get_face_analyser().get(frame)
+        return sorted(faces, key=lambda x: x.bbox[0])
     except IndexError:
         return None

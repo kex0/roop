@@ -99,8 +99,8 @@ def process_frame(source_face: Face, temp_frame_path: str, matches_dict: dict) -
                     # get key of closest key that has non None value
                     non_none_indices = [i for i, value in enumerate(matches_dict.values()) if value is not None]
                     if non_none_indices:
-                        match_index = list(matches_dict.keys()).index(closest_match_key)
-                        result_index = min(non_none_indices, key=lambda x: abs(x - match_index))
+                        matches_index = list(matches_dict.keys()).index(closest_match_key)
+                        result_index = min(non_none_indices, key=lambda x: abs(x - matches_index))
                     else:
                         result_index = None
                     if result_index is not None:

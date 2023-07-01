@@ -177,10 +177,6 @@ def create_filename(source_index, target_index):
 
 
 def start() -> None:
-    for frame_processor in get_frame_processors_modules(roop.globals.frame_processors):
-        if not frame_processor.pre_start():
-            return
-
     # make sure roop.globals.target_paths and roop.globals.source_paths are lists
     if isinstance(roop.globals.target_paths, str):
         roop.globals.target_paths = [roop.globals.target_paths]
@@ -208,6 +204,15 @@ def start() -> None:
             image = ui.render_image_preview(roop.globals.source_path, (200, 200))
             ui.source_label.configure(image=image)
             output_path = roop.globals.output_path
+
+            # check if a face in the source image is detected
+            source_face = True
+            for frame_processor in get_frame_processors_modules(roop.globals.frame_processors):
+                if not frame_processor.pre_start():
+                    source_face = False
+                    break
+            if not source_face:
+                continue
 
             # create the output filename
             output_name = create_filename(source_index, target_index)

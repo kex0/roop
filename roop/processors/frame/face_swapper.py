@@ -189,6 +189,8 @@ def process_recognition(temp_frame_paths: List[str]) -> dict:
         face_locations = sorted(face_locations, key=lambda x: x[1])
         face_encodings = face_recognition.face_encodings(temp_frame, face_locations)
 
+        if len(face_encodings) == 0:
+            matches_dict[temp_frame_path] = None
         for i, face_encoding in enumerate(face_encodings):
             matches = face_recognition.compare_faces([reference_encoding], face_encoding)
             if True in matches:
